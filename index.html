@@ -41,32 +41,33 @@
     line-height: 1.6;
     font-size: var(--base-size);
     -webkit-font-smoothing: antialiased;
-    display: flex;
-    flex-direction: column;
+    /* 移除 flex 布局，使用常规流，避免某些浏览器下 sticky 失效 */
+    display: block;
     min-height: 100vh;
   }
 
-  /* ====== 顶部固定栏 ====== */
-  header {
-    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-    color: #fff;
-    padding: 12px 20px 14px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  /* ==========================================
+     顶部固定栏（红框部分：标题、字体调整、意见反馈）
+     ========================================== */
+  .header-sticky {
+    position: -webkit-sticky;
     position: sticky;
     top: 0;
-    z-index: 99;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    z-index: 100; /* 确保层级高于下方内容 */
+    color: #fff;
+    /* 使用与渐变背景相近的深蓝色并添加毛玻璃效果 */
+    background: rgba(30, 58, 138, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
   }
 
   .header-inner {
     max-width: 1360px;
     margin: 0 auto;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
     position: relative;
   }
 
@@ -79,7 +80,7 @@
     min-height: 40px;
   }
   .header-title h1 { 
-    font-size: calc(var(--base-size) *2.5); 
+    font-size: calc(var(--base-size) * 2.5); 
     font-weight: 800; 
     letter-spacing: 2px; 
     margin: 0;
@@ -114,7 +115,7 @@
     border: none;
     border-radius: 5px;
     width: 30px;
-    height: 26px; /* 配合外层padding 3px，总高 34px */
+    height: 26px;
     cursor: pointer;
     font-weight: 800;
     font-size: 13px;
@@ -141,10 +142,10 @@
     backdrop-filter: blur(4px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
-    padding: 0 14px; /* 水平内边距，控制宽度 */
-    height: 34px; /* 与 .font-control 高度完全一致 */
-    font-size: 13px; /* 与字体按钮字号一致 */
-    font-weight: 800; /* 与字体按钮字重一致 */
+    padding: 0 14px;
+    height: 34px;
+    font-size: 13px;
+    font-weight: 800;
     color: #fff;
     cursor: pointer;
     font-family: inherit;
@@ -158,7 +159,15 @@
     background: rgba(255, 255, 255, 0.4);
   }
 
-  /* 搜索与筛选区域 */
+  /* ==========================================
+     搜索与筛选区域（随页面滚动）
+     ========================================== */
+  .header-search-section {
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+    color: #fff;
+    padding: 12px 20px 14px;
+  }
+
   .header-search-area {
     display: flex;
     flex-direction: column;
@@ -251,7 +260,9 @@
   .card-list { display: flex; flex-direction: column; gap: 20px; }
   .card {
     background: var(--card-bg); border-radius: 14px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-    border: 1px solid var(--border); overflow: hidden; transition: all 0.2s; scroll-margin-top: 130px;
+    border: 1px solid var(--border); overflow: hidden; transition: all 0.2s; 
+    /* 锚点跳转时留出吸顶栏的高度 */
+    scroll-margin-top: 80px;
   }
   .card:hover { box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08); border-color: #cbd5e1; }
 
@@ -478,6 +489,45 @@
     background: #1d4ed8;
   }
 
+  /* ====== 返回顶部按钮 ====== */
+  .back-to-top {
+    position: fixed;
+    right: 30px;
+    bottom: 40px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #2563eb;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+  }
+  .back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .back-to-top:hover {
+    background: #f8fafc;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
+  }
+  .back-to-top svg {
+    width: 22px;
+    height: 22px;
+  }
+
   /* ====== 响应式适配 ====== */
   @media (max-width: 1150px) {
     .section-body-layout { grid-template-columns: 1fr; }
@@ -489,6 +539,9 @@
   }
 
   @media (max-width: 768px) {
+    .header-sticky { padding: 10px 16px; }
+    .header-search-section { padding: 10px 16px 14px; }
+    
     .search-box { flex-direction: column; align-items: flex-start; gap: 6px; }
     .search-input-wrap { width: 100%; }
     .filter-panel { flex-direction: column; align-items: flex-start; gap: 8px; }
@@ -501,7 +554,7 @@
     .tags { margin-left: 40px; }
     .card-body { padding: 16px; }
     .section { padding: 16px; }
-    .card { scroll-margin-top: 240px; }
+    .card { scroll-margin-top: 70px; }
     .site-footer { padding: 16px 20px 20px; }
     
     /* 移动端标题字体调整 */
@@ -512,6 +565,10 @@
     /* 移动端等比缩小整体尺寸，保持视觉一致 */
     .font-control { transform: scale(0.9); transform-origin: right center; }
     .feedback-btn { height: 30px; padding: 0 10px; font-size: 12px; font-weight: 800; }
+
+    /* 返回顶部按钮移动端位置 */
+    .back-to-top { right: 20px; bottom: 24px; width: 40px; height: 40px; }
+    .back-to-top svg { width: 20px; height: 20px; }
   }
 
   @media (max-width: 600px) {
@@ -525,10 +582,9 @@
 </head>
 <body>
 
-<header>
+<!-- 顶部吸顶部分（红框内容：标题、字体调整、意见反馈） -->
+<div class="header-sticky">
   <div class="header-inner">
-    
-    <!-- 标题、字体大小控制与反馈按钮 -->
     <div class="header-top">
       <div class="header-title">
         <h1>中铁二局五公司质量通病防治手册</h1>
@@ -542,8 +598,12 @@
         <button id="feedbackBtn" class="feedback-btn" type="button">意见反馈</button>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- 搜索与筛选面板 -->
+<!-- 搜索与筛选区域（随页面滚动） -->
+<div class="header-search-section">
+  <div class="header-inner">
     <div class="header-search-area">
       
       <!-- 第一行：全局搜索 -->
@@ -593,8 +653,9 @@
       
     </div>
   </div>
-</header>
+</div>
 
+<!-- 列表容器 -->
 <div class="container">
   <div class="stats">
     <span id="resultCount">共 150 条记录</span>
@@ -616,6 +677,13 @@
 <footer class="site-footer">
   <span>根据中国中铁质量通病防治手册第一、三分册制作，相关意见请点击意见反馈，感谢您的支持。powered by malling</span>
 </footer>
+
+<!-- 返回顶部按钮 -->
+<button id="backToTopBtn" class="back-to-top" title="返回顶部" aria-label="返回顶部">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 19V5M5 12l7-7 7 7"/>
+  </svg>
+</button>
 
 <!-- 意见反馈弹窗 -->
 <div id="feedbackModal" class="feedback-modal" aria-hidden="true">
@@ -3868,7 +3936,7 @@ function buildImageHtml(item, type) {
   }
 
   return `
-    <img src="${fileName}" class="real-img" alt="${altText}" title="点击查看原图"
+    <img src="${fileName}" class="real-img" alt="${altText}" title="点击查看原图" loading="lazy"
          onclick="window.open(this.src, '_blank')"
          onerror="this.outerHTML='<div class=\\'img-placeholder\\'><div class=\\'img-name\\'>${placeholderName}</div><div class=\\'img-size\\'>尺寸：480 × 342</div></div>'">
   `;
@@ -4045,14 +4113,34 @@ renderCards();
   btn.addEventListener('click', openModal);
   closeBtn.addEventListener('click', closeModal);
 
-  // 点击遮罩层关闭
   modal.addEventListener('click', function (e) {
     if (e.target === modal) closeModal();
   });
 
-  // ESC 键关闭
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+  });
+})();
+
+// ==========================================
+// 返回顶部按钮逻辑
+// ==========================================
+(function () {
+  const backToTopBtn = document.getElementById('backToTopBtn');
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.classList.add('show');
+    } else {
+      backToTopBtn.classList.remove('show');
+    }
+  });
+
+  backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   });
 })();
 </script>
